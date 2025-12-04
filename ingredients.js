@@ -153,5 +153,4 @@ function renderSavedIngredientsPreview(){
     `<span class="pill">${escapeHtml(item.name)}</span>`
   ).join('');
 }
-});
 
