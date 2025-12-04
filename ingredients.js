@@ -1,4 +1,7 @@
 // Ingredients manager: stores in localStorage under key 'mf_ingredients'
+<div class="ingredient-name">${escapeHtml(it.name)}</div>
+<div class="days-left">${it.daysLeft} day(s) left (${formatISO(it.expiryISO)})</div>
+</div>
 <div>
 <button onclick="removeIngredient('${it.id}')" class="secondary">Remove</button>
 </div>
