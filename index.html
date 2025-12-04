@@ -6,45 +6,53 @@
 <title>Meal Finder — Recipes</title>
 <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
+
 <header class="topbar">
-<h1>Meal Finder</h1>
-<nav>
-<a href="index.html">Recipes</a>
-<a href="ingredients.html">Ingredients</a>
-</nav>
+    <h1>Meal Finder</h1>
+    <nav>
+        <a href="index.html">Recipes</a>
+        <a href="ingredients.html">Ingredients</a>
+    </nav>
 </header>
 
-
 <main class="container">
-<section class="search-section">
-<h2>Search meals by ingredient</h2>
-<div class="inline">
-<input id="quickIngredient" placeholder="type ingredient (e.g. chicken)">
-<button id="quickSearch">Search</button>
-</div>
-<h3>Saved Ingredients</h3>
-<div id="savedIngredientsPreview"></div>
-<div id="savedIngredients" class="saved-ingredients"></div>
-<div class="inline">
-<button id="searchWithSelected">Search Using Selected Ingredients</button>
-<button id="clearSelection">Clear Selection</button>
-</div>
-</section>
 
+    <!-- QUICK SEARCH -->
+    <section class="search-section">
+        <h2>Search meals by ingredient</h2>
+        <div class="inline">
+            <input id="quickIngredient" placeholder="type ingredient (e.g. chicken)">
+            <button id="quickSearch">Search</button>
+        </div>
 
-<section>
-<h2>Results</h2>
-<div id="results" class="meal-grid"></div>
-</section>
+        <h3>Saved Ingredients</h3>
+
+        <!-- PREVIEW (optional) -->
+        <div id="savedIngredientsPreview"></div>
+
+        <!-- SELECTABLE CHIPS -->
+        <div id="savedIngredients" class="saved-ingredients"></div>
+
+        <div class="inline">
+            <button id="searchWithSelected">Search Using Selected Ingredients</button>
+            <button id="clearSelection">Clear Selection</button>
+        </div>
+    </section>
+
+    <!-- RESULTS -->
+    <section>
+        <h2>Results</h2>
+        <div id="results" class="meal-grid"></div>
+    </section>
+
 </main>
 
-
-<!-- Modal -->
+<!-- MODAL -->
 <div id="modal" class="modal hidden">
-<div class="modal-content" id="modalContent"></div>
+    <div class="modal-content" id="modalContent"></div>
 </div>
-
 
 <script src="recipe.js"></script>
 </body>
