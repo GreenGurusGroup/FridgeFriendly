@@ -119,4 +119,68 @@ window.removeIngredient = function (id) {
 // Preview (used by recipes page)
 // -----------------------------
 function renderSavedIngredientsPreview() {
-    const box = document.getElementById("savedIngredientsPreview")
+    const box = document.getElementById("savedIngredientsPreview");
+    if (!box) return; // Safe no-op on pages without it
+
+    const list = readStore();
+    if (list.length === 0) {
+        box.innerHTML = "<p>No saved ingredients.</p>";
+        return;
+    }
+
+    box.innerHTML = list.map(i => `<span class="pill">${escapeHtml(i.name)}</span>`).join("");
+}
+
+// -----------------------------
+// DOM Wiring
+// -----------------------------
+document.addEventListener("DOMContentLoaded", () => {
+    const radioDate = document.querySelector(`input[name="expType"][value="date"]`);
+    const radioDays = document.querySelector(`input[name="expType"][value="days"]`);
+    const dateRow  = document.getElementById("dateRow");
+    const daysRow  = document.getElementById("daysRow");
+
+    function toggleRows() {
+        if (radioDate.checked) {
+            dateRow.classList.remove("hidden");
+            daysRow.classList.add("hidden");
+        } else {
+            dateRow.classList.add("hidden");
+            daysRow.classList.remove("hidden");
+        }
+    }
+    radioDate.addEventListener("change", toggleRows);
+    radioDays.addEventListener("change", toggleRows);
+
+    document.getElementById("addIngredient").addEventListener("click", () => {
+        const name = document.getElementById("ingredientName").value.trim();
+        if (!name) return alert("Enter ingredient name");
+
+        let expiryISO;
+        if (radioDate.checked) {
+            const date = document.getElementById("expDate").value;
+            if (!date) return alert("Pick a date");
+            expiryISO = new Date(date).toISOString();
+        } else {
+            const days = parseInt(document.getElementById("daysInput").value, 10);
+            if (isNaN(days)) return alert("Enter number of days");
+            const d = new Date();
+            d.setDate(d.getDate() + days);
+            expiryISO = d.toISOString();
+        }
+
+        const store = readStore();
+        store.push({ id: String(Date.now()), name, expiryISO });
+        writeStore(store);
+
+        document.getElementById("ingredientName").value = "";
+        document.getElementById("expDate").value = "";
+        document.getElementById("daysInput").value = "";
+
+        renderList();
+        renderSavedIngredientsPreview();
+    });
+
+    renderList();
+    renderSavedIngredientsPreview();
+});
