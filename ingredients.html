@@ -1,1 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Meal Finder — Ingredients</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="topbar">
+<h1>Ingredient Manager</h1>
+<nav>
+<a href="index.html">Recipes</a>
+<a href="ingredients.html">Ingredients</a>
+</nav>
+</header>
 
+
+<main class="container">
+<section class="add-section">
+<h2>Add Ingredient</h2>
+<div class="form-row">
+<input id="ingredientName" placeholder="Ingredient name (e.g. Tomato)">
+</div>
+
+
+<div class="form-row small">
+<label>
+<input type="radio" name="expType" value="date" checked> Expiration date
+</label>
+<label>
+<input type="radio" name="expType" value="days"> Days until expiration
+</label>
+</div>
+
+
+<div class="form-row" id="dateRow">
+<input id="expDate" type="date">
+</div>
+
+
+<div class="form-row hidden" id="daysRow">
+<input id="daysInput" type="number" min="0" placeholder="Days until expiration">
+</div>
+
+
+<div class="form-row">
+<button id="addIngredient">Add to My Ingredients</button>
+</div>
+</section>
+
+
+<section>
+<h2>My Ingredients</h2>
+<div id="ingredientList" class="ingredient-list"></div>
+</section>
+</main>
+
+
+<script src="ingredients.js"></script>
+</body>
+</html>
