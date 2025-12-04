@@ -1,4 +1,57 @@
 // Ingredients manager: stores in localStorage under key 'mf_ingredients'
+// Each item: { id, name, expiryISO }
+const STORAGE_KEY = 'mf_ingredients';
+
+
+function readStore(){
+try{ return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); }
+catch(e){ return []; }
+}
+function writeStore(items){ localStorage.setItem(STORAGE_KEY, JSON.stringify(items)); }
+
+
+function daysUntil(dateISO){
+const now = new Date();
+const then = new Date(dateISO);
+// zero out times for day-accurate diff
+const msPerDay = 24*60*60*1000;
+const diff = Math.ceil((then.setHours(0,0,0,0) - new Date(now.setHours(0,0,0,0))) / msPerDay);
+return diff;
+}
+function colorForDays(d){
+// green -> yellow -> orange -> red
+if (d <= 2) return '#ef4444'; // red
+if (d <= 6) return '#fb923c'; // orange
+if (d <= 14) return '#fbbf24'; // yellow
+return '#10b981'; // green
+}
+
+
+function renderList(){
+const list = readStore();
+const container = document.getElementById('ingredientList');
+if (!container) return;
+
+
+// compute days left
+const withDays = list.map(it => ({...it, daysLeft: daysUntil(it.expiryISO)}));
+
+
+// sort ascending by daysLeft
+withDays.sort((a,b) => a.daysLeft - b.daysLeft);
+
+
+if (withDays.length === 0){ container.innerHTML = '<p>No ingredients yet. Add some above.</p>'; return; }
+
+
+container.innerHTML = withDays.map(it => {
+const color = colorForDays(it.daysLeft);
+return `
+<div class="ingredient-card" data-id="${it.id}" style="border-left:6px solid ${color}">
+<div class="ingredient-thumb" data-name="${escapeHtml(it.name)}">
+<img src="https://www.themealdb.com/images/ingredients/${encodeURIComponent(it.name)}.png" alt="${escapeHtml(it.name)}" onerror="this.style.display='none'; renderPlaceholder(this.parentElement, '${escapeJs(it.name)}')">
+</div>
+<div class="ingredient-info">
 <div class="ingredient-name">${escapeHtml(it.name)}</div>
 <div class="days-left">${it.daysLeft} day(s) left (${formatISO(it.expiryISO)})</div>
 </div>
@@ -9,8 +62,6 @@
 `;
 }).join('');
 }
-
-
 function renderPlaceholder(parent, name){
 // parent is .ingredient-thumb element
 parent.innerHTML = '';
