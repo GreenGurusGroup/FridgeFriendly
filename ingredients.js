@@ -138,7 +138,20 @@ renderSavedIngredientsPreview();
 
 renderList();
 renderSavedIngredientsPreview();
+
+function renderSavedIngredientsPreview(){
+  const preview = document.getElementById('savedIngredientsPreview');
+  if (!preview) return;
+
+  const list = readStore();
+  if (list.length === 0){
+    preview.innerHTML = '<p>No saved ingredients.</p>';
+    return;
+  }
+
+  preview.innerHTML = list.map(item => 
+    `<span class="pill">${escapeHtml(item.name)}</span>`
+  ).join('');
+}
 });
 
-
-// sm
