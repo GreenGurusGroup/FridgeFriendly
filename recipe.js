@@ -83,4 +83,61 @@ async function openMealModal(id) {
 
   content.innerHTML = `
     <h2>${escapeHtml(meal.strMeal)}</h2>
-    <i
+    <img src="${meal.strMealThumb}" style="width:100%;border-radius:8px;margin:8px 0">
+    <h3>Ingredients</h3>
+    <ul>${ingredientsHTML}</ul>
+    <h3>Instructions</h3>
+    <p>${escapeHtml(meal.strInstructions || "")}</p>
+  `;
+
+  modal.classList.remove("hidden");
+}
+
+// Close when clicking outside the modal content
+document.addEventListener("click", (e) => {
+  const modal = document.getElementById("modal");
+  if (!modal || modal.classList.contains("hidden")) return;
+  if (e.target === modal) modal.classList.add("hidden");
+});
+
+// --- Button actions ---
+async function doQuickSearch() {
+  const val = document.getElementById("quickIngredient").value.trim();
+  if (!val) { alert("Enter an ingredient."); return; }
+  const meals = await searchByIngredient(val);
+  renderMeals(meals);
+}
+
+async function doSelectedSearch() {
+  const selected = Array.from(document.querySelectorAll("#savedIngredients input[type=checkbox]:checked"))
+                        .map(cb => cb.value);
+  if (!selected.length) { alert("Select at least one saved ingredient."); return; }
+
+  // Fetch result set per ingredient
+  const sets = await Promise.all(selected.map(s => searchByIngredient(s)));
+
+  // If any set is empty, intersection is empty
+  if (sets.some(arr => arr.length === 0)) { renderMeals([]); return; }
+
+  // Intersect by idMeal
+  const ids = sets.map(list => new Set(list.map(m => m.idMeal)))
+                  .reduce((acc, set) => new Set([...acc].filter(id => set.has(id))));
+  const meals = await Promise.all([...ids].map(id => lookupMeal(id)));
+  renderMeals(meals.filter(Boolean));
+}
+
+// --- Wire up on load ---
+document.addEventListener("DOMContentLoaded", () => {
+  renderSavedIngredientsSelector();
+
+  const quickBtn = document.getElementById("quickSearch");
+  if (quickBtn) quickBtn.addEventListener("click", doQuickSearch);
+
+  const selectedBtn = document.getElementById("searchWithSelected");
+  if (selectedBtn) selectedBtn.addEventListener("click", doSelectedSearch);
+
+  const clearBtn = document.getElementById("clearSelection");
+  if (clearBtn) clearBtn.addEventListener("click", () => {
+    document.querySelectorAll("#savedIngredients input[type=checkbox]").forEach(cb => cb.checked = false);
+  });
+});
